@@ -4,21 +4,23 @@ import {screens} from '../screen';
 import {RootStackParamList} from '../types/navigation.ts';
 import {COLORS} from "../utils/colors"
 import CustomLayout from '../components/CustomLayout.js';
+import Header from '../components/Header.tsx';
+
+export const routeWithOutHeader = ["Welcome", "GenreSelection"];
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const StackNavigator: React.FC = () => {
 
 
+
   return (
     <Stack.Navigator
-      initialRouteName="Homepage"
+      initialRouteName="Welcome"
       screenOptions={({route, navigation}) => ({
         header: () => {
-          if (route.name !== 'Login' && route.name !== 'SetPassword') {
+          if (!routeWithOutHeader.includes(route.name)) {
             return (
-              <>
-                <Header />
-              </>
+                <Header title = {route.name} />
             );
           }
           return null;
@@ -31,7 +33,7 @@ const StackNavigator: React.FC = () => {
       })}>
       {screens.map(screen => {
         const ScreenComponent = (props: any) => (
-          <CustomLayout routeName={screen.name} navigation={props.navigation}>
+          <CustomLayout routeName={screen.name} >
             <screen.component {...props} />
           </CustomLayout>
         );

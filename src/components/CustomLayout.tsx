@@ -1,19 +1,24 @@
-import React from 'react';
-import { View} from 'react-native';
-import Footer from './Footer.tsx';
-const CustomLayout = ({ children, routeName, navigation }) => {
-  let screensWithFooter = ['Login'];
+import React, { ReactNode } from 'react';
+import { View } from 'react-native';
+import Footer from './Footer';
 
+interface CustomLayoutProps {
+  children: ReactNode;
+  routeName: string;
+}
+
+import { routeWithOutHeader } from '../navigation/StackNavigator';
+
+const CustomLayout: React.FC<CustomLayoutProps> = ({ children, routeName }) => {
 
   return (
     <>
       <View>{children}</View>
-      {screensWithFooter.includes(routeName) && (
-        <Footer navigation={navigation} routeName={routeName} />
+      {!routeWithOutHeader.includes(routeName) && (
+        <Footer activeTab={routeName} />
       )}
     </>
   );
 };
-
 
 export default CustomLayout;

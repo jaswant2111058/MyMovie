@@ -1,6 +1,7 @@
 export type RootStackParamList = {
-    Login: {};
-    
-    Home: {};
-    Homepage: {};
+    Welcome: {};
+    GenreSelection: {};
+    MovieList: {};
+    MovieDetail: {};
+    Favorite: {};
 };
