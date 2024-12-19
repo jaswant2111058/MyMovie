@@ -1,5 +1,4 @@
-// screens/MovieListScreen.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,8 +8,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import { Search } from 'lucide-react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { getMoviesThunkAction } from '../redux/action/movieAction';
+import { AppDispatch, RootState } from '../redux/store'; 
 
 interface Movie {
   id: number;
@@ -21,19 +24,15 @@ interface Movie {
 }
 
 const MovieList: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   
-  // Sample data - replace with your actual data
-  const movies = [
-    {
-      id: 1,
-      title: 'The Shawshank Redemption',
-      rating: 9.3,
-      poster: 'https://fakeimg.pl/220x310/ff0000',
-      genre: ['Drama']
-    },
-    // ... more movies
-  ];
+  const { loading, movieData } = useSelector((state: RootState) => state.movie);
+  
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(getMoviesThunkAction());
+  }, [dispatch]);
 
   const renderMovieCard = ({ item }: { item: Movie }) => (
     <TouchableOpacity style={styles.cardContainer}>
@@ -55,9 +54,16 @@ const MovieList: React.FC = () => {
     </TouchableOpacity>
   );
 
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#6366F1" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      {/* Search Bar */}
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
           <TextInput
@@ -71,22 +77,27 @@ const MovieList: React.FC = () => {
         </View>
       </View>
 
-      {/* Movie Grid */}
       <FlatList
-        data={movies}
+        data={movieData}
         renderItem={renderMovieCard}
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}
         columnWrapperStyle={styles.movieGrid}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No movies found</Text>
+          </View>
+        )}
       />
     </View>
   );
 };
 
 const { width } = Dimensions.get('window');
-const cardWidth = (width - 48) / 2; // 48 = padding and gap
+const cardWidth = (width - 48) / 2;
+
 
 const styles = StyleSheet.create({
   container: {
@@ -149,6 +160,22 @@ const styles = StyleSheet.create({
   },
   rating: {
     fontSize: 14,
+    color: '#666666',
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 32,
+  },
+  emptyText: {
+    fontSize: 16,
     color: '#666666',
   },
 });
