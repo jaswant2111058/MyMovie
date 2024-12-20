@@ -76,7 +76,6 @@ const MovieList: React.FC = () => {
           <Search color="#999" size={20} style={styles.searchIcon} />
         </View>
       </View>
-
       <FlatList
         data={movieData}
         renderItem={renderMovieCard}
@@ -90,6 +89,9 @@ const MovieList: React.FC = () => {
             <Text style={styles.emptyText}>No movies found</Text>
           </View>
         )}
+        ListFooterComponent={() => (
+          <View style={styles.footerSpace} />
+        )}
       />
     </View>
   );
@@ -101,7 +103,6 @@ const cardWidth = (width - 48) / 2;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#FFFFFF',
   },
   searchContainer: {
@@ -178,6 +179,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666666',
   },
+  footerSpace:{
+    height:330
+  }
 });
 
 export default MovieList;

@@ -1,48 +1,53 @@
-// GenreSelectionScreen.tsx
 import React, { useState } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
+  Image
 } from 'react-native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+
+type RootStackParamList = {
+    MovieList: undefined;
+    GenreSelection: undefined;
+};
 
 interface GenreSelectionScreenProps {
   onNext?: (selectedGenres: string[]) => void;
 }
 
-const GenreSelection: React.FC<GenreSelectionScreenProps> = ({ onNext }) => {
+const GenreSelection: React.FC<GenreSelectionScreenProps> = (  ) => {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   const genres = ['Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Sci-Fi'];
 
   const toggleGenre = (genre: string) => {
-    setSelectedGenres(prev => 
+    setSelectedGenres(prev =>
       prev.includes(genre)
         ? prev.filter(g => g !== genre)
         : [...prev, genre]
     );
   };
 
-  const handleNext = () => {
-    if (onNext && selectedGenres.length > 0) {
-      onNext(selectedGenres);
-    }
-  };
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  
+      const handleNext = () => {
+          navigation.navigate("MovieList")
+      };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.content}>
-        {/* Movie Icon */}
         <View style={styles.iconContainer}>
-          <Text style={styles.icon}>🎬</Text>
+          <Image
+            source={require("../assets/Vector.png")}
+            style={styles.icon}
+          />
         </View>
 
-        {/* Title */}
         <Text style={styles.title}>Select Your Favorite{'\n'}Genres</Text>
-
-        {/* Genres Grid */}
+    
         <View style={styles.genresContainer}>
           {genres.map((genre) => (
             <TouchableOpacity
@@ -64,12 +69,9 @@ const GenreSelection: React.FC<GenreSelectionScreenProps> = ({ onNext }) => {
             </TouchableOpacity>
           ))}
         </View>
-
-        {/* Next Button */}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[
             styles.nextButton,
-            selectedGenres.length === 0 && styles.nextButtonDisabled
           ]}
           onPress={handleNext}
           disabled={selectedGenres.length === 0}
@@ -77,26 +79,32 @@ const GenreSelection: React.FC<GenreSelectionScreenProps> = ({ onNext }) => {
           <Text style={styles.nextButtonText}>Next</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+   
     backgroundColor: '#FFFFFF',
   },
   content: {
-    flex: 1,
+   
     paddingHorizontal: 24,
     justifyContent: 'center',
     alignItems: 'center',
   },
   iconContainer: {
-    marginBottom: 32,
+    marginTop:100,
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 100
   },
   icon: {
-    fontSize: 48,
+
+    height: 40,
+    width: 30
+
   },
   title: {
     fontSize: 32,
@@ -139,11 +147,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'absolute',
-    bottom: 48,
-  },
-  nextButtonDisabled: {
-    opacity: 0.5,
+   
+    marginTop:100,
+   
   },
   nextButtonText: {
     color: '#FFFFFF',

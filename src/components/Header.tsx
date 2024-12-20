@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'center',
+        marginLeft:-40
     },
     rightContainer: {
         width: 40,

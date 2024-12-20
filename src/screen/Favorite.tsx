@@ -7,8 +7,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
 } from 'react-native';
+import { useSelector } from 'react-redux';
+import {  RootState } from '../redux/store'; 
 
 interface Movie {
   id: number;
@@ -42,29 +43,13 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => (
 );
 
 const Favorite: React.FC = () => {
-  // Sample data
-  const movies = [
-    {
-      id: 1,
-      title: "The Shawshank Redemption",
-      year: 1994,
-      genre: ["Drama", "Crime"],
-      plot: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
-      poster: "https://fakeimg.pl/220x310",
-    },
-    {
-      id: 2,
-      title: "The Godfather",
-      year: 1972,
-      genre: ["Drama", "Crime"],
-      plot: "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-      poster: "https://fakeimg.pl/220x310",
-    },
-    // ... more movies
-  ];
+
+  const { movieData } = useSelector((state: RootState) => state.movie);
+
+
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView 
         showsVerticalScrollIndicator={true}
         style={styles.scrollView}
@@ -72,22 +57,22 @@ const Favorite: React.FC = () => {
         scrollIndicatorInsets={{ right: 3 }} // iOS only
       >
         <View style={styles.content}>
-          {movies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
+          {movieData.map((movie, index) => (
+            <MovieCard key={index} movie={movie} />
           ))}
         </View>
+        <View style={{height:200}}></View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#FFFFFF',
   },
   scrollView: {
-    flex: 1,
+   
   },
   content: {
     padding: 16,
@@ -126,7 +111,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   button: {
-    alignSelf: 'flex-start',
+    alignSelf: 'flex-end',
     backgroundColor: '#6366F1',
     paddingVertical: 8,
     paddingHorizontal: 16,

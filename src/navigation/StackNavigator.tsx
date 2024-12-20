@@ -3,7 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {screens} from '../screen';
 import {RootStackParamList} from '../types/navigation.ts';
 import {COLORS} from "../utils/colors"
-import CustomLayout from '../components/CustomLayout.js';
+import CustomLayout from '../components/CustomLayout.tsx';
 import Header from '../components/Header.tsx';
 
 export const routeWithOutHeader = ["Welcome", "GenreSelection"];
