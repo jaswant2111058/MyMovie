@@ -1,3 +1,5 @@
+import { useRoute, RouteProp } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 import React from 'react';
 import {
   View,
@@ -5,25 +7,48 @@ import {
   Image,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   Dimensions,
+  TouchableOpacity
 } from 'react-native';
+import { RootState } from '../redux/store';
+import { addToFavorites, removeFromFavorites } from '../redux/reducer/movieSlice';
 
-interface MovieDetailProps {
-  movie: {
-    title: string;
-    plot: string;
-    year: number;
-    genre: string[];
-    poster: string;
+type RootStackParamList = {
+  MovieDetail: {
+    movie: Movie;
   };
+};
+
+interface Movie {
+  id: number;  // Added id as it's needed for favorites
+  title: string;
+  plot: string;
+  year: number;
+  genre: string[];
+  poster: string;
 }
 
-const MovieDetail: React.FC<MovieDetailProps> = ({ movie }) => {
+const MovieDetail: React.FC = () => {
+  const route = useRoute<RouteProp<RootStackParamList, 'MovieDetail'>>();
+  const { movie } = route.params;
+  const dispatch = useDispatch();
+  const favMovies = useSelector((state: RootState) => state.movie.favMovies);
+
+  const toggleFavorite = (movie: Movie) => {
+    if (isFav(movie)) {
+      dispatch(removeFromFavorites(movie.id));
+    } else {
+      dispatch(addToFavorites(movie));
+    }
+  }
+
+  const isFav = (movie: Movie): boolean => {
+    return favMovies.some(favMovie => favMovie.id === movie.id);
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        {/* Poster Image */}
+    <View style={styles.container}>
+      <ScrollView>    
         <View style={styles.posterContainer}>
           <Image
             source={{ uri: movie.poster }}
@@ -31,24 +56,14 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie }) => {
             resizeMode="cover"
           />
         </View>
-
-        {/* Movie Info */}
         <View style={styles.infoContainer}>
-          {/* Title */}
           <Text style={styles.title}>{movie.title}</Text>
-
-          {/* Plot */}
           <Text style={styles.plot}>{movie.plot}</Text>
-
-          {/* Details */}
           <View style={styles.detailsContainer}>
-            {/* Release Year */}
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Year of Release:</Text>
               <Text style={styles.detailValue}>{movie.year}</Text>
             </View>
-
-            {/* Genre */}
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Genre:</Text>
               <Text style={styles.detailValue}>
@@ -57,8 +72,17 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie }) => {
             </View>
           </View>
         </View>
+        <TouchableOpacity
+          style={[styles.nextButton]}
+          onPress={() => toggleFavorite(movie)}
+        >
+          <Text style={styles.nextButtonText}>
+            {`Mark as ${isFav(movie) ? "Unfavorite" : "Favorite"}`}
+          </Text>
+        </TouchableOpacity>
+        <View style={{ height: 200 }}></View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -66,12 +90,11 @@ const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#FFFFFF',
   },
   posterContainer: {
     width: width,
-    height: width * 1.2,
+    height: width-100,
     borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: '#F0F0F0',
@@ -112,6 +135,22 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontWeight: '500',
   },
+  nextButton: {
+    width: '95%',
+    height: 50,
+    backgroundColor: '#6366F1',
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft:"auto",
+    marginRight:"auto"
+
+  },
+  nextButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
 
-export default MovieDetail
+export default MovieDetail;

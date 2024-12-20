@@ -1,4 +1,3 @@
-// screens/MovieListScreen.tsx
 import React from 'react';
 import {
   View,
@@ -9,7 +8,16 @@ import {
   ScrollView,
 } from 'react-native';
 import { useSelector } from 'react-redux';
-import {  RootState } from '../redux/store'; 
+import { RootState } from '../redux/store';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+
+type RootStackParamList = {
+    MovieList: undefined;
+    GenreSelection: undefined;
+    MovieDetail: {
+        movie: Movie;
+    };
+};
 
 interface Movie {
   id: number;
@@ -20,7 +28,12 @@ interface Movie {
   poster: string;
 }
 
-const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => (
+interface MovieCardProps {
+  movie: Movie;
+  handlePress: (movie: Movie) => void;
+}
+
+const MovieCard: React.FC<MovieCardProps> = ({ movie, handlePress }) => (
   <View style={styles.card}>
     <Image
       source={{ uri: movie.poster }}
@@ -35,7 +48,9 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => (
       <Text style={styles.plot} numberOfLines={3}>
         {movie.plot}
       </Text>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity 
+        onPress={() => handlePress(movie)}
+        style={styles.button}>
         <Text style={styles.buttonText}>View Details</Text>
       </TouchableOpacity>
     </View>
@@ -43,10 +58,12 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => (
 );
 
 const Favorite: React.FC = () => {
+  const { favMovies } = useSelector((state: RootState) => state.movie);
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const { movieData } = useSelector((state: RootState) => state.movie);
-
-
+  const handlePress = (item: Movie) => {
+    navigation.navigate('MovieDetail', { movie: item });
+  };
 
   return (
     <View style={styles.container}>
@@ -57,8 +74,8 @@ const Favorite: React.FC = () => {
         scrollIndicatorInsets={{ right: 3 }} // iOS only
       >
         <View style={styles.content}>
-          {movieData.map((movie, index) => (
-            <MovieCard key={index} movie={movie} />
+          {favMovies.map((movie, index) => (
+            <MovieCard key={index} movie={movie} handlePress={handlePress} />
           ))}
         </View>
         <View style={{height:200}}></View>

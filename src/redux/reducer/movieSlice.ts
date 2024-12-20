@@ -1,11 +1,27 @@
-import { createSlice } from '@reduxjs/toolkit';
-
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { getMoviesThunkAction } from '../action/movieAction';
 
-const initialState = {
+interface Movie {
+  id: number;
+  title: string;
+  genre: string[];
+  year: number;
+  plot: string;
+  poster: string;
+}
+
+interface MovieState {
+  loading: boolean;
+  movieData: Movie[];
+  error: string | null;
+  favMovies: Movie[];
+}
+
+const initialState: MovieState = {
   loading: false,
   movieData: [],
   error: null,
+  favMovies: []
 };
 
 const movieSlice = createSlice({
@@ -15,10 +31,18 @@ const movieSlice = createSlice({
     clearMovieError: (state) => {
       state.error = null;
     },
+    addToFavorites: (state, action: PayloadAction<Movie>) => {
+      const exists = state.favMovies.some(movie => movie.id === action.payload.id);
+      if (!exists) {
+        state.favMovies.push(action.payload);
+      }
+    },
+    removeFromFavorites: (state, action: PayloadAction<number>) => {
+      state.favMovies = state.favMovies.filter(movie => movie.id !== action.payload);
+    }
   },
   extraReducers: (builder) => {
     builder
-      // Handle createSession
       .addCase(getMoviesThunkAction.pending, (state) => {
         state.loading = true;
       })
@@ -36,6 +60,8 @@ const movieSlice = createSlice({
 
 export const {
   clearMovieError,
+  addToFavorites,
+  removeFromFavorites
 } = movieSlice.actions;
 
 export default movieSlice.reducer;

@@ -10,10 +10,19 @@ import {
   Dimensions,
   ActivityIndicator,
 } from 'react-native';
-import { Search } from 'lucide-react-native';
+import { Navigation, Search } from 'lucide-react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMoviesThunkAction } from '../redux/action/movieAction';
 import { AppDispatch, RootState } from '../redux/store'; 
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+
+type RootStackParamList = {
+    MovieList: undefined;
+    GenreSelection: undefined;
+    MovieDetail: {
+        movie: Movie;
+    };
+};
 
 interface Movie {
   id: number;
@@ -25,17 +34,23 @@ interface Movie {
 
 const MovieList: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  
   const { loading, movieData } = useSelector((state: RootState) => state.movie);
-  
   const dispatch = useDispatch<AppDispatch>();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     dispatch(getMoviesThunkAction());
   }, [dispatch]);
 
+  const handlePress = (item: Movie) => {
+    navigation.navigate('MovieDetail', { movie: item });
+  };
+
   const renderMovieCard = ({ item }: { item: Movie }) => (
-    <TouchableOpacity style={styles.cardContainer}>
+    <TouchableOpacity 
+      onPress={() => handlePress(item)}
+      style={styles.cardContainer}
+    >
       <View style={styles.card}>
         <Image
           source={{ uri: item.poster }}
@@ -99,7 +114,6 @@ const MovieList: React.FC = () => {
 
 const { width } = Dimensions.get('window');
 const cardWidth = (width - 48) / 2;
-
 
 const styles = StyleSheet.create({
   container: {
@@ -179,8 +193,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666666',
   },
-  footerSpace:{
-    height:330
+  footerSpace: {
+    height: 330
   }
 });
 

@@ -7,6 +7,7 @@ import {
   Image
 } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { showToast } from '../utils/toast';
 
 type RootStackParamList = {
     MovieList: undefined;
@@ -33,6 +34,10 @@ const GenreSelection: React.FC<GenreSelectionScreenProps> = (  ) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   
       const handleNext = () => {
+        if(selectedGenres.length === 0){
+          showToast("Please Select Some Genres")
+          return
+        }
           navigation.navigate("MovieList")
       };
 
@@ -74,7 +79,6 @@ const GenreSelection: React.FC<GenreSelectionScreenProps> = (  ) => {
             styles.nextButton,
           ]}
           onPress={handleNext}
-          disabled={selectedGenres.length === 0}
         >
           <Text style={styles.nextButtonText}>Next</Text>
         </TouchableOpacity>

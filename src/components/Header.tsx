@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container}>
                 <View style={styles.leftContainer}>
-                    {showBack && (
+                    {(title === "MovieDetail") && (
                         <TouchableOpacity
                             onPress={() => { navigation.goBack() }}
                             style={styles.iconButton}
@@ -47,14 +47,15 @@ const Header: React.FC<HeaderProps> = ({
                         style={styles.homeButton}
                     >
                         {title === "Favorite" ?
-                            <Home
-                                size={24}
-                                color={'#000000'}
-                            /> :
+                            
                             <Heart
                                 size={24}
                                 color={'#000000'}
-                            />
+                            />:
+                            <Home
+                                size={24}
+                                color={'#000000'}
+                            /> 
                         }
                         <Text style={styles.title}>{title === "Favorite" ? "Favorite Movies" : "My Movies"}</Text>
                     </View>
